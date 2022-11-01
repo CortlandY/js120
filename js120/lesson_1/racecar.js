@@ -3,23 +3,27 @@ let raceCar = {
   fuelLevel: 0.5,
   engineOn: false,
 
-  startEngine: function() {
-    raceCar.engineOn = true;
+  startEngine() {
+    this.engineOn = true;
   },
 
-  drive: function() {
-    raceCar.fuelLevel -= 0.1;
+  drive() {
+    this.fuelLevel -= 0.1;
   },
 
-  stopEngine: function() {
-    raceCar.engineOn = false;
+  stopEngine() {
+    this.engineOn = false;
   },
 
-  refuel: function(percent) {
-    if ((raceCar.fuelLevel + (percent / 100)) <= 1) {
-      raceCar.fuelLevel += (percent / 100);
+  refuel(percent) {
+    if ((this.fuelLevel + (percent / 100)) <= 1) {
+      this.fuelLevel += (percent / 100);
     } else {
-      raceCar.fuelLevel = 1;
+      this.fuelLevel = 1;
     }
   },
 };
+
+raceCar.refuel(30);
+raceCar.startEngine();
+console.log(raceCar);
