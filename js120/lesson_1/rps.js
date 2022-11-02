@@ -1,47 +1,57 @@
-/* eslint-disable max-lines-per-function */
-// Step One: Textual Description //
-
-/*
-RPS is a two-player game where each player chooses one of three possible moves:
-rock, paper, or scissors. The winner is chosen by comparing their moves with
-the following rules:
-
-Rock crushes scissors, i.e., rock wins against scissors.
-Scissors cuts paper, i.e., scissors beats paper.
-Paper wraps rock, i.e., paper beats rock.
-If the players chose the same move, the game is a tie.
-*/
-
-// Step Two: Extract Significant Nouns/Verbs //
-
-/*
-Nouns: player, move, rule
-Verbs: choose, compare
-*/
-
-// Step Three: Organize and Associate Nouns with Verbs //
-
-/*
-Player
- - choose
-Move
-Rule
-
-???
-- compare
-*/
+// Constants //
 const readline = require('readline-sync');
 
+// Utility Functions //
+function prompt(string) {
+  console.log(`=> ${string}\n`);
+}
+
+function capitalize(str) {
+  return (str[0]).toUpperCase() + str.slice(1).toLowerCase();
+}
+
 const RPSGame = {
+  CHOICES: {
+    rock: {shorthand: 'r', beats: ['scissors']},
+    paper: {shorthand: 'p', beats: ['rock']},
+    scissors: {shorthand: 'sc', beats: ['paper']},
+  },
+  WIN_CONDITION: 5,
+  roundWinner: null,
+  gameWinner: null,
+  history: [],
+
   human: createHuman(),
   computer: createComputer(),
 
   displayWelcomeMessage() {
-    console.log(`Welcome to Rock, Paper, Scissors!\n`);
+    console.clear();
+    const gameName = Object.keys(this.CHOICES).join(', ');
+
+    prompt(`Welcome to ${gameName}!`);
+    prompt(`First to ${this.WIN_CONDITION} wins will be crowned grand champion!`);
   },
 
   displayGoodbyeMessage() {
-    console.log('Thanks for playing Rock, Paper, Scissors. Goodbye!');
+    const gameName = Object.keys(this.CHOICES).join(', ');
+
+    prompt(`Thanks for playing ${gameName} Goodbye!`);
+  },
+
+  displayScore() {
+    console.log(`You: ${this.human.score}\nComputer: ${this.computer.score}`);
+  },
+
+  determineWinner() {
+    let humanMove = this.human.move;
+    let computerMove = this.computer.move;
+    console.log(Object.entries(this.CHOICES));
+
+    if (this.CHOICES[humanMove][this.beats] === computerMove) {
+      this.roundWinner = 'human';
+    } else if (humanMove === computerMove) {
+      this.roundWinner = 'tie';
+    } else this.roundWinner = 'computer';
   },
 
   displayWinner() {
@@ -49,9 +59,14 @@ const RPSGame = {
     let computerMove = this.computer.move;
 
     console.log(`You chose: ${this.human.move}`);
-    console.log(`The computer chose: ${this.computer.move}`);
+    console.log(`The computer chose: ${this.computer.move}\n`);
 
-    if ((humanMove === 'rock' && computerMove === 'scissors') ||
+    if (this.roundWinner === 'tie') {
+      prompt('It\'s a tie this round!');
+    } else {
+      prompt (`${this.roundWinner} wins this round!`);
+    }
+    /*if ((humanMove === 'rock' && computerMove === 'scissors') ||
     (humanMove === 'paper' && computerMove === 'rock') ||
     (humanMove === 'scissors' && computerMove === 'paper')) {
       console.log('You win!');
@@ -61,7 +76,7 @@ const RPSGame = {
       console.log('Computer wins!');
     } else {
       console.log("It's a tie");
-    }
+    }*/
   },
 
   playAgain() {
@@ -75,7 +90,9 @@ const RPSGame = {
     while (true) {
       this.human.choose();
       this.computer.choose();
+      this.determineWinner();
       this.displayWinner();
+      this.displayScore();
       if (!this.playAgain()) break;
     }
     this.displayGoodbyeMessage();
@@ -85,6 +102,7 @@ const RPSGame = {
 function createPlayer() {
   return {
     move: null,
+    score: 0,
   };
 }
 
